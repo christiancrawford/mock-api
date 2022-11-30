@@ -1,0 +1,3357 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @goModel(model: String, models: [String!]) on ENUM | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+
+directive @external on FIELD_DEFINITION
+
+directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @key(fields: _FieldSet!) on OBJECT | INTERFACE
+
+input AddCartItemPrescriptionInput {
+  """Newleaf Prescriber ID"""
+  newleafPrescriberId: String
+  """Transfer Pharmacy fax"""
+  pharmacyFax: String
+  """Transfer Pharmacy name"""
+  pharmacyName: String
+  """Transfer Pharmacy phone"""
+  pharmacyPhone: String
+  """Transfer Pharmacy rx number"""
+  pharmacyRxNumber: ID
+  """Prescriber street address line 1"""
+  prescriberAddress: String
+  """Prescriber address city"""
+  prescriberCity: String
+  """Prescriber fax number"""
+  prescriberFax: String
+  """Prescriber first name"""
+  prescriberFirstName: String
+  """Prescriber last name"""
+  prescriberLastName: String
+  """Prescriber phone number"""
+  prescriberPhone: String
+  """Prescriber address state (2-letter abbreviation)"""
+  prescriberState: String
+  """Prescriber address zip (ZIP, ZIP+4)"""
+  prescriberZip: String
+  """Whether or not patient has a prescription on file"""
+  rxOnFile: Boolean
+}
+
+"""Input type of AddCartItems"""
+input AddCartItemsInput {
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String
+  """Items to be added to cart"""
+  items: [CreateCartItemInput]
+}
+
+"""Return type of AddCartItems"""
+type AddCartItemsPayload {
+  """Cart information"""
+  cart: Cart
+}
+
+input AddSubscriptionItemInput {
+  patientId: ID
+  period: Int!
+  productId: ID!
+  qty: Int!
+  startDate: Time!
+}
+
+"""Customer address information"""
+type Address {
+  """Customer address city"""
+  city: String!
+  """Customer address company name"""
+  company: String
+  """Customer address country (i.e. USA)"""
+  country: String!
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID address belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Customer address first name"""
+  firstName: String!
+  """Primary identifier"""
+  id: ID!
+  """Whether customer address is active"""
+  isActive: Boolean
+  """
+  Whether this address is the default billing address used for this customer; 
+  only one default billing address may be set at a time for each customer. 
+  Can be the same address as the default shipping address
+  """
+  isDefaultBilling: Boolean
+  """
+  Whether this address is the default shipping address used for this customer; 
+  only one default shipping address may be set at a time for each customer. 
+  Can be the same address as the default billing address
+  """
+  isDefaultShipping: Boolean
+  """Text label for customer address (i.e. 'Home Address')"""
+  label: String
+  """Customer address last name"""
+  lastName: String!
+  """Customer address middle name (or initial)"""
+  middleName: String
+  """Customer address postcode (ZIP, ZIP+4)"""
+  postcode: String!
+  """Customer address prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer address state (2-letter abbreviation)"""
+  state: String!
+  """Customer street address line 1"""
+  street1: String!
+  """Customer street address line 2 (i.e. apartment number)"""
+  street2: String
+  """Customer address name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Input type of AdjustCartItemQty"""
+input AdjustCartItemQtyInput {
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String
+  """Cart Item ID (ref: `cart_item.id`)"""
+  itemId: ID!
+  """ProductID (ref: `product.id`)"""
+  productId: ID!
+  """Quantity of product in cart"""
+  qty: Int!
+}
+
+"""Return type of AdjustCartItemQty"""
+type AdjustCartItemQtyPayload {
+  """Cart information"""
+  cart: Cart
+}
+
+scalar Any
+
+"""Return type of Login and RefreshAccessToken"""
+type AuthPayload {
+  """Access token"""
+  accessToken: String!
+  """Refresh token"""
+  refreshToken: String!
+  """Refresh token expiration"""
+  refreshTokenExp: String!
+}
+
+type AutocompleteResult {
+  imageUrl: String!
+  indication: String
+  name: String!
+  price: Float!
+  url: String!
+}
+
+"""Input type of CancelOrder"""
+input CancelOrderInput {
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Reason for order cancellation"""
+  reason: String!
+}
+
+"""Return type of CancelOrder"""
+type CancelOrderPayload {
+  """True if successfully cancelled"""
+  success: Boolean
+}
+
+type Carrier {
+  createdOn: Time
+  flatRate: Float!
+  formattedName: String!
+  iconImageUrl: String!
+  id: ID!
+  name: String!
+  updatedOn: Time
+}
+
+"""The root type for the pagination. Again, generalized/standardized name"""
+type CarrierConnection {
+  edges: [CarrierEdge]
+  pageInfo: PageInfo!
+}
+
+type CarrierEdge {
+  """The cursor for this result item fits naturally here"""
+  cursor: String
+  """
+  node is a generalized name for an item in a collection - it's our noun!
+  """
+  node: Carrier
+}
+
+input CarrierOrder {
+  direction: OrderDirection!
+  field: CarrierOrderField
+}
+
+enum CarrierOrderField {
+  PRICE
+  TITLE
+}
+
+"""Cart information"""
+type Cart {
+  """Billing address ID for cart (ref: `customer_address.id`)"""
+  billingAddressId: ID
+  """Items in a shopping cart"""
+  cartItems: [CartItem]
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this cart item"""
+  counselingRequested: Boolean
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID cart belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """Discount total for cart"""
+  discountTotal: Float
+  """
+  Grand total of all items in cart.
+  `cart.grand_total` = sum(`cart_item.total` + `cart_item.tax`) + `shipping_total` + 
+  `shipping_tax` - `cart_item_discounts` - `cart_discount`
+  """
+  grandTotal: Float
+  """Primary identifier"""
+  id: String!
+  """Payment method used for cart (ref: `payment_method.id`)"""
+  paymentMethodId: ID
+  """Shipment method selected for cart (ref: `shipment_method.id`)"""
+  shipmentMethodId: ID
+  """Shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID
+  """Tax on shipping for cart"""
+  shippingTax: Float
+  """Shipping total for cart"""
+  shippingTotal: Float
+  """
+  Subtotal of all items in cart. Equal to the sum of all `cart_item.total` for 
+  this cart.
+  """
+  subtotal: Float
+  """
+  Total tax for cart. Does not include `shipping_tax`. Equal to the sum of all 
+  `cart_item.tax` for this order.
+  """
+  taxTotal: Float
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Cart item information"""
+type CartItem {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String!
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this cart item"""
+  counselingRequested: Boolean
+  """Time of record creation"""
+  createdAt: Time!
+  """Primary identifier"""
+  id: ID!
+  """Product image URL"""
+  imageUrl: String!
+  """Patient ID (ref: `patient.id`), if cart item requires a prescription"""
+  patientId: ID
+  prescription: CartItemPrescription
+  priceTiers: [PriceTier]
+  """Product details"""
+  product: Product
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  """Product Name"""
+  productName: String
+  """Quantity of product in cart"""
+  qty: Int!
+  """Whether or not product requires a prescription"""
+  requiresRx: Boolean
+  """Shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID
+  """Product SKU"""
+  sku: String!
+  """Tax for cart item"""
+  tax: Float
+  """Product image thumbnail URL"""
+  thumbnailUrl: String!
+  """Total for cart item (`qty` * `price`)"""
+  total: Float!
+  """Unit price for this product"""
+  unitPrice: Decimal!
+  """Time of record last update"""
+  updatedAt: Time!
+  """Product URL, for accessing product page"""
+  url: String!
+}
+
+"""Cart item prescription information"""
+type CartItemPrescription {
+  """Cart Item ID (ref: cart_item.id)"""
+  cartItemId: ID!
+  """Primary identifier"""
+  id: ID!
+  """Newleaf Prescriber ID"""
+  newleafPrescriberId: String
+  """Transfer Pharmacy fax"""
+  pharmacyFax: String
+  """Transfer Pharmacy name"""
+  pharmacyName: String
+  """Transfer Pharmacy phone"""
+  pharmacyPhone: String
+  """Transfer Pharmacy rx number"""
+  pharmacyRxNumber: ID
+  """Prescriber street address line 1"""
+  prescriberAddress: String
+  """Prescriber address city"""
+  prescriberCity: String
+  """Prescriber fax number"""
+  prescriberFax: String
+  """Prescriber first name"""
+  prescriberFirstName: String
+  """Prescriber last name"""
+  prescriberLastName: String
+  """Prescriber phone number"""
+  prescriberPhone: String
+  """Prescriber address state (2-letter abbreviation)"""
+  prescriberState: String
+  """Prescriber address zip (ZIP, ZIP+4)"""
+  prescriberZip: String
+  """Whether or not patient has a prescription on file"""
+  rxOnFile: Boolean
+}
+
+"""Categories group products by type, medical condition, etc."""
+type Category {
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Primary identifier"""
+  id: ID!
+  """Category image URL"""
+  imageUrl: String!
+  """Whether the category is active"""
+  isActive: Boolean
+  """Category name"""
+  name: String!
+  """Hierarchy path of category, includes category IDs separated by periods"""
+  path: String!
+  """Products within this category"""
+  products: [Product]
+  """Category image thumbnail URL"""
+  thumbnailUrl: String!
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+  """Category URL"""
+  url: String!
+  """Category visibility [1=Nowhere, 2=On site, 3=In search, 4=Everywhere]"""
+  visibility: Int!
+}
+
+"""Checkout information"""
+type Checkout {
+  """Billing Address information"""
+  billingAddress: Address
+  """Billing address ID for checkout (ref: customer_address.id)"""
+  billingAddressId: ID
+  """Cart information"""
+  cart: Cart!
+  """Cart ID for checkout (ref: cart.id)"""
+  cartId: String!
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this checkout"""
+  counselingRequested: Boolean
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer information"""
+  customer: Customer!
+  """Customer ID checkout belongs to (ref: customer.id)"""
+  customerId: ID!
+  """Discount total for checkout"""
+  discountTotal: Float
+  """
+  Grand total of all items in cart. checkout.grand_total = sum(cart_item.total + cart_item.tax) + shipping_total + shipping_tax - cart_item_discounts - cart_discount
+  """
+  grandTotal: Float
+  """Primary identifier for table (UUIDv4)"""
+  id: String!
+  """Payment Method information"""
+  paymentMethod: PaymentMethod
+  """Payment method used for checkout (ref: payment_method.id)"""
+  paymentMethodId: ID
+  """Prescribers associated to customer"""
+  prescribers: [Prescriber]
+  """Shipment Method information"""
+  shipmentMethod: ShipmentMethod
+  """Shipment method selected for checkout (ref: shipment_method.id)"""
+  shipmentMethodId: ID
+  """Available Shipment Methods"""
+  shipmentMethods: [ShipmentMethod]
+  """Shipping Address information"""
+  shippingAddress: Address
+  """Shipping address ID for checkout (ref: customer_address.id)"""
+  shippingAddressId: ID
+  """Tax on shipping for checkout"""
+  shippingTax: Float
+  """Shipping total for checkout"""
+  shippingTotal: Float
+  """
+  Total tax for checkout. Does not include shipping_tax. Equal to the sum of all cart_item.tax for this order.
+  """
+  taxTotal: Float
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Customer contact methods and information"""
+type Contact {
+  """Customer contact information for this method"""
+  contactInfo: String!
+  """Customer contact method [email, phone, sms]"""
+  contactMethod: String!
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID!
+  """Primary identifier"""
+  id: ID!
+  """
+  Whether this is the primary method of contact for this customer 
+  (only one record true per customer)
+  """
+  isPrimary: Boolean
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Input type of CreateAddress"""
+input CreateAddressInput {
+  """Customer address city"""
+  city: String!
+  """Customer address company name"""
+  company: String
+  """Customer address country (i.e. USA)"""
+  country: String!
+  """Customer ID address belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Customer address first name"""
+  firstName: String!
+  """Whether customer address is active"""
+  isActive: Boolean
+  """
+  Whether this address is the default billing address used for this customer; 
+  only one default billing address may be set at a time for each customer. 
+  Can be the same address as the default shipping address
+  """
+  isDefaultBilling: Boolean
+  """
+  Whether this address is the default shipping address used for this customer; 
+  only one default shipping address may be set at a time for each customer. 
+  Can be the same address as the default billing address
+  """
+  isDefaultShipping: Boolean
+  """Text label for customer address (i.e. 'Home Address')"""
+  label: String
+  """Customer address last name"""
+  lastName: String!
+  """Customer address middle name (or initial)"""
+  middleName: String
+  """Customer address postcode (ZIP, ZIP+4)"""
+  postcode: String!
+  """Customer address prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer address state (2-letter abbreviation)"""
+  state: String!
+  """Customer street address line 1"""
+  street1: String!
+  """Customer street address line 2 (i.e. apartment number)"""
+  street2: String
+  """Customer address name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of CreateAddress"""
+type CreateAddressPayload {
+  """List of addresses associated to a customer"""
+  addresses: [Address]
+}
+
+"""Input type of CreateCarriers"""
+input CreateCarriersInput {
+  flatRate: Float!
+  formattedName: String!
+  iconImageUrl: String!
+  name: String!
+}
+
+"""Return type of CreateCarriers"""
+type CreateCarriersPayload {
+  carriers: [Carrier]
+}
+
+"""Input type of CreateCart"""
+input CreateCartInput {
+  """Cart items information"""
+  cartItems: [CreateCartItemInput]
+  """Customer ID cart belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """
+  Subtotal of all items in cart. Equal to the sum of all `cart_item.total` for 
+  this cart.
+  """
+  subtotal: Float
+}
+
+"""Input type of CreateCartItem"""
+input CreateCartItemInput {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String
+  """Patient ID (ref: `patient.id`), if cart item requires a prescription"""
+  patientId: ID
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  productName: String
+  """Quantity of product in cart"""
+  qty: Int!
+  requiresRx: Boolean
+  """Tax for cart item"""
+  tax: Float
+  """Total for cart item (`qty` * `price`)"""
+  total: Float
+}
+
+"""Return type of CreateCart"""
+type CreateCartPayload {
+  """Cart information"""
+  cart: Cart
+}
+
+"""Input type of CreateCheckoutFromOrder"""
+input CreateCheckoutFromOrderInput {
+  """Order ID (ref: order.id)"""
+  orderId: ID!
+}
+
+"""Return type of CreateCheckoutFromOrder"""
+type CreateCheckoutFromOrderPayload {
+  """True if successful"""
+  success: Boolean
+}
+
+"""Input type of CreateCheckoutFromPrescription"""
+input CreateCheckoutFromPrescriptionInput {
+  """Rx number"""
+  rxNumber: ID!
+}
+
+"""Return type of CreateCheckoutFromPrescription"""
+type CreateCheckoutFromPrescriptionPayload {
+  """True if successful"""
+  success: Boolean
+}
+
+"""Input type of CreateContact"""
+input CreateContactInput {
+  """Customer contact information for this method"""
+  contactInfo: String!
+  """Customer contact method [email, phone, sms]"""
+  contactMethod: String!
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID!
+  """
+  Whether this is the primary method of contact for this customer 
+  (only one record true per customer)
+  """
+  isPrimary: Boolean
+}
+
+"""Return type of CreateContact"""
+type CreateContactPayload {
+  """List of contacts associated to a customer"""
+  contacts: [Contact]
+}
+
+"""Input type of CreateCustomer"""
+input CreateCustomerInput {
+  """Customer identifier in ActiveCampaign (external system)"""
+  activeCampaignId: Int
+  """Whether customer may be contacted by email"""
+  contactMethodEmail: Boolean
+  """Whether customer may be contacted by phone"""
+  contactMethodPhone: Boolean
+  """Whether customer may be contacted by sms (text message)"""
+  contactMethodSms: Boolean
+  """Customer date of birth"""
+  dob: Time
+  """Customer email address"""
+  email: String
+  """Customer first name"""
+  firstName: String!
+  """Customer gender [male/female]"""
+  gender: String
+  """Whether customer account is active"""
+  isActive: Boolean
+  """Whether customer is subscribed to the company newsletter"""
+  isSubNewsletter: Boolean
+  """Customer last name"""
+  lastName: String!
+  """Customer maiden name (optional)"""
+  maidenName: String
+  """Customer middle name (or initial)"""
+  middleName: String
+  """Hashed customer password"""
+  password: String
+  """Customer phone number"""
+  phone: String
+  """Customer name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer name suffix"""
+  suffix: String
+}
+
+"""Return type of CreateCustomer"""
+type CreateCustomerPayload {
+  """Customer information"""
+  customer: Customer
+}
+
+input CreateDrugAllergyInput {
+  code: String!
+  description: String!
+}
+
+input CreateEventAddressInput {
+  """Customer address city"""
+  city: String!
+  """Customer address country (i.e. USA)"""
+  country: String!
+  """Customer ID address belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Customer address first name"""
+  firstName: String!
+  """Whether customer address is active"""
+  isActive: Boolean
+  """
+  Whether this address is the default billing address used for this customer; 
+  only one default billing address may be set at a time for each customer. 
+  Can be the same address as the default shipping address
+  """
+  isDefaultBilling: Boolean
+  """
+  Whether this address is the default shipping address used for this customer; 
+  only one default shipping address may be set at a time for each customer. 
+  Can be the same address as the default billing address
+  """
+  isDefaultShipping: Boolean
+  """Text label for customer address (i.e. 'Home Address')"""
+  label: String
+  """Customer address last name"""
+  lastName: String!
+  """Address ID in Newleaf"""
+  newleafAddressId: String!
+  """Customer address postcode (ZIP, ZIP+4)"""
+  postcode: String!
+  """Customer address state (2-letter abbreviation)"""
+  state: String!
+  """Customer street address line 1"""
+  street1: String!
+  """Customer street address line 2 (i.e. apartment number)"""
+  street2: String
+}
+
+"""Return type of CreateEventAddress"""
+type CreateEventAddressPayload {
+  """Address information"""
+  address: Address
+}
+
+input CreateEventCustomerInput {
+  """Customer date of birth"""
+  dob: Time
+  """Customer email address"""
+  email: String
+  """Customer first name"""
+  firstName: String!
+  """Customer gender [male/female]"""
+  gender: String
+  """Whether customer account is active"""
+  isActive: Boolean
+  """Customer last name"""
+  lastName: String!
+  """Customer middle name (or initial)"""
+  middleName: String
+  """Customer ID in Newleaf"""
+  newleafCustomerId: String!
+  """Customer name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer name suffix"""
+  suffix: String
+}
+
+"""Return type of CreateEventCustomer"""
+type CreateEventCustomerPayload {
+  """Customer information"""
+  customer: Customer
+}
+
+input CreateEventOrderInput {
+  """Order billing address ID (ref: `customer_address.id`)"""
+  billingAddressId: ID!
+  """Customer ID order belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Order line item information"""
+  lineItems: [CreateEventOrderItemInput!]!
+  newleafOrderId: String!
+  newleafOrderNumber: String!
+  """Payment method used for order (ref: `payment_method.id`)"""
+  paymentMethodId: ID!
+  """Shipment method selected for order (ref: `shipment_method.id`)"""
+  shipmentMethodId: ID!
+  """Order shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID!
+}
+
+input CreateEventOrderItemInput {
+  """Patient ID (ref: `patient.id`), if item requires a prescription"""
+  patientId: ID
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  """Quantity of product ordered"""
+  qty: Int!
+}
+
+"""Return type of CreateEventOrder"""
+type CreateEventOrderPayload {
+  """Order information"""
+  order: Order
+}
+
+input CreateEventPatientInput {
+  """Patient date of birth"""
+  dob: Time!
+  """Patient drug allergy information (or n/a if none)"""
+  drugAllergy: String!
+  """Customer email address"""
+  email: String!
+  """Patient first name"""
+  firstName: String!
+  """Patient gender [male/female]"""
+  gender: String!
+  """Whether patient account is active"""
+  isActive: Boolean
+  """Patient last name"""
+  lastName: String!
+  """Patient medical history (or n/a if none)"""
+  medicalHistory: String!
+  """Patient middle name (or initial)"""
+  middleName: String
+  newleafCustomerId: String!
+  """Patient other medications (or n/a if none)"""
+  otherMedication: String!
+  """Type of patient [human, canine, feline, equine, bovine, other]"""
+  patientType: String!
+  """Patient name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Whether patient elects to have safety caps on dispensed medication"""
+  safetyCap: Boolean
+  """Patient name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of CreateEventPatient"""
+type CreateEventPatientPayload {
+  """Patient information"""
+  patient: Patient
+}
+
+input CreateMedicalHistoryInput {
+  code: String!
+  codeType: Int!
+  description: String!
+}
+
+"""Input type of CreateOrder"""
+input CreateOrderInput {
+  """
+  Billing address city, copied (from `customer_address`) at time of order
+  """
+  billingAddressCity: String!
+  """
+  Billing address company, copied (from `customer_address`) at time of order
+  """
+  billingAddressCompany: String
+  """
+  Billing address country, copied (from `customer_address`) at time of order
+  """
+  billingAddressCountry: String!
+  """
+  Billing address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressFirstName: String!
+  """Order billing address ID (ref: `customer_address.id`)"""
+  billingAddressId: ID!
+  """
+  Billing address last name, copied (from `customer_address`) at time of order
+  """
+  billingAddressLastName: String!
+  """
+  Billing address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  billingAddressMiddleName: String
+  """
+  Billing address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  billingAddressPostcode: String!
+  """
+  Billing address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressPrefix: String
+  """
+  Billing address state, copied (from `customer_address`) at time of order
+  """
+  billingAddressState: String!
+  """
+  Billing street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressStreet1: String!
+  """
+  Billing street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  billingAddressStreet2: String
+  """
+  Billing address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressSuffix: String
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this order"""
+  counselingRequested: Boolean
+  """Customer credit amount used for order"""
+  customerCreditTotal: Float!
+  """Customer date of birth, copied (from `customer`) at time of order"""
+  customerDob: Time
+  """Customer email address, copied (from `customer`) at time of order"""
+  customerEmail: String!
+  """Customer gender, copied (from `customer`) at time of order"""
+  customerGender: String
+  """Customer ID order belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Discount total for order"""
+  discountTotal: Float!
+  """
+  Grand total of all items in order. `order.grand_total` = sum(`order_item.total` + 
+  `order_item.tax`) + `shipping_total` + `shipping_tax` - `line_item_discounts` - 
+  `order_discount` - `customer_credit_total`
+  """
+  grandTotal: Float!
+  """Order line items information"""
+  lineItems: [CreateOrderItemInput!]!
+  """Order number, a human-readable sequential designator for orders"""
+  orderNumber: Int!
+  """Payment method used for order (ref: `payment_method.id`)"""
+  paymentMethodId: ID!
+  """Shipment method selected for order (ref: `shipment_method.id`)"""
+  shipmentMethodId: ID!
+  """
+  Shipping address city, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCity: String!
+  """
+  Shipping address company, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCompany: String
+  """
+  Shipping address country, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCountry: String!
+  """
+  Shipping address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressFirstName: String!
+  """Order shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID!
+  """
+  Shipping address last name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressLastName: String!
+  """
+  Shipping address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  shippingAddressMiddleName: String
+  """
+  Shipping address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  shippingAddressPostcode: String!
+  """
+  Shipping address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressPrefix: String
+  """
+  Shipping address state, copied (from `customer_address`) at time of order
+  """
+  shippingAddressState: String!
+  """
+  Shipping street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressStreet1: String!
+  """
+  Shipping street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  shippingAddressStreet2: String
+  """
+  Shipping address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressSuffix: String
+  """Tax on shipping for order"""
+  shippingTax: Float!
+  """Shipping total for order"""
+  shippingTotal: Float!
+  """Status of order"""
+  status: String!
+  """
+  Subtotal of all items in order. Equal to the sum of all `order_item.total` 
+  for this order.
+  """
+  subtotal: Float!
+  """
+  Total tax for order. Does not include `shipping_tax`. Equal to the sum of 
+  all `order_item.tax` for this order.
+  """
+  taxTotal: Float!
+}
+
+"""Input type of CreateOrderItem"""
+input CreateOrderItemInput {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Patient ID (ref: `patient.id`), if item requires a prescription"""
+  patientId: ID
+  """Unit price of product ordered"""
+  price: Float!
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  """Quantity of product ordered"""
+  qty: Int!
+  """Tax for order line item"""
+  tax: Float!
+  """Total for order line item (`qty` * `price`)"""
+  total: Float!
+}
+
+"""Return type of CreateOrder"""
+type CreateOrderPayload {
+  """Order information"""
+  order: Order
+}
+
+input CreateOtherMedicationInput {
+  name: String!
+  newleafProductId: String!
+}
+
+"""Input type of CreatePatient"""
+input CreatePatientInput {
+  """Patient date of birth"""
+  dob: Time!
+  """Patient drug allergy information (or n/a if none)"""
+  drugAllergies: [CreateDrugAllergyInput]
+  """Patient first name"""
+  firstName: String!
+  """Patient gender [male/female]"""
+  gender: String!
+  """Whether patient account is active"""
+  isActive: Boolean
+  """Whether patient is pregnant"""
+  isPregnant: Boolean
+  """Patient last name"""
+  lastName: String!
+  """Patient maiden name (optional)"""
+  maidenName: String
+  """Patient medical history (or n/a if none)"""
+  medicalHistory: [CreateMedicalHistoryInput]
+  """Patient middle name (or initial)"""
+  middleName: String
+  """Patient other medications (or n/a if none)"""
+  otherMedications: [CreateOtherMedicationInput]
+  """Type of patient [human, canine, feline, equine, bovine, other]"""
+  patientType: String!
+  """Patient name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Whether patient elects to have safety caps on dispensed medication"""
+  safetyCap: Boolean
+  """Patient name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of CreatePatient"""
+type CreatePatientPayload {
+  """List of patients associated to a customer"""
+  patient: [Patient]
+}
+
+"""Input type of CreatePaymentMethod"""
+input CreatePaymentMethodInput {
+  """eCheck Account Number"""
+  accountNumber: String
+  """Billing Address ID"""
+  addressID: ID!
+  """Brand of card used [amex, visa, disc, mc]"""
+  brand: String
+  """Credit card full number (16 digits)"""
+  cardNumber: String
+  """Customer ID this payment method belongs to (ref: `customer.id`)"""
+  customerID: ID!
+  """Credit card cvv"""
+  cvv: String
+  """Credit card expiration month (2 digits)"""
+  expMonth: String
+  """Credit card expiration year (4 digits)"""
+  expYear: String
+  """
+  Whether this payment method is the default used for this customer; 
+  only one default payment method may be set at a time for each customer
+  """
+  isDefault: Boolean
+  """
+  Label for payment method visible to customer (i.e. 'Business Credit Card')
+  """
+  label: String
+  """Type of payment method [card, echeck]"""
+  paymentType: String!
+  """eCheck Routing Number"""
+  routingNumber: String
+}
+
+"""Return type of CreatePaymentMethod"""
+type CreatePaymentMethodPayload {
+  """List of payment methods associated to a customer"""
+  paymentMethods: [PaymentMethod]
+}
+
+"""Input type of CreateSubscription"""
+input CreateSubscriptionInput {
+  """Billing address ID used for subscription (ref: `customer_address.id`)"""
+  billingAddressId: ID!
+  """Customer ID used for subscription (ref: `customer.id`)"""
+  customerId: ID!
+  """
+  End date of subscription (optional). Canceled subscriptions should have 
+  this field updated to track what period(s) of time a subscription was 
+  inactive.
+  """
+  endDate: Time
+  """Date of next scheduled subscription order"""
+  nextOrderDate: Time!
+  """
+  Patient ID used for subscription (ref: `patient.id`), if subscription is for 
+  a prescription product
+  """
+  patientId: ID
+  """Payment method ID used for subscription (ref: `payment_method.id`)"""
+  paymentMethodId: ID!
+  """Period of subscription in days [30, 60, 90, 180]"""
+  period: Int!
+  """
+  Price of product, stored in case of product price changes. If product 
+  price goes down, update this price. If product price goes up, honor the 
+  stored price.
+  """
+  price: Float!
+  """Product ID for subscription (ref: `product.id`)"""
+  productId: ID!
+  """Quantity to order at one time"""
+  qty: Int!
+  """Shipping address ID used for subscription (ref: `customer_address.id`)"""
+  shippingAddressId: ID!
+  """Start date of subscription (mandatory)"""
+  startDate: Time!
+  """Subscription status [active, inactive, exception]"""
+  status: String!
+}
+
+"""Input type of CreateSubscriptionOrder"""
+input CreateSubscriptionOrderInput {
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Subscription ID (ref: `subscription.id`)"""
+  subscriptionId: ID!
+}
+
+"""Return type of CreateSubscriptionOrder"""
+type CreateSubscriptionOrderPayload {
+  """List of subscriptions associated to an order"""
+  subscriptionOrders: [CustomerSubscriptionOrder]
+}
+
+"""Return type of CreateSubscription"""
+type CreateSubscriptionPayload {
+  """List of subscriptions associated to a customer"""
+  subscriptions: [CustomerSubscription]
+}
+
+"""Customer store credit information (from refunds, etc)"""
+type Credit {
+  """Customer credit balance"""
+  balance: Float!
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID!
+  """Customer store credit transactions"""
+  transactions: [CreditTransaction]
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Customer store credit transactions"""
+type CreditTransaction {
+  """Amount of customer credit transaction"""
+  amount: Float!
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID!
+  """Primary identifier"""
+  id: ID!
+  """Memo field for customer credit transaction"""
+  note: String!
+  """Type of customer credit transaction [credit, debit]"""
+  type: String!
+}
+
+"""Customer information"""
+type Customer {
+  """Customer identifier in ActiveCampaign (external system)"""
+  activeCampaignId: Int
+  """Addresses associated to Customer"""
+  addresses: [Address]
+  """Whether customer may be contacted by email"""
+  contactMethodEmail: Boolean
+  """Whether customer may be contacted by phone"""
+  contactMethodPhone: Boolean
+  """Whether customer may be contacted by sms (text message)"""
+  contactMethodSms: Boolean
+  """Contacts associated to Customer"""
+  contacts: [Contact]
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  credit: Credit
+  """Customer date of birth"""
+  dob: Time
+  """Customer email address"""
+  email: String!
+  """Customer first name"""
+  firstName: String!
+  """Customer gender [male/female]"""
+  gender: String
+  """Primary identifier"""
+  id: ID!
+  """Whether customer account is active"""
+  isActive: Boolean
+  """Whether customer is subscribed to the company newsletter"""
+  isSubNewsletter: Boolean
+  """Customer last name"""
+  lastName: String!
+  """Customer maiden name (optional)"""
+  maidenName: String
+  """Customer middle name (or initial)"""
+  middleName: String
+  """Hashed customer password"""
+  password: String!
+  """Patients associated to Customer"""
+  patients: [Patient]
+  """Payment methods associated to Customer"""
+  paymentMethods: [PaymentMethod]
+  """Customer name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer name suffix"""
+  suffix: String
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""
+CustomerSubscription information for products automatically reordered on a schedule
+"""
+type CustomerSubscription {
+  """Billing address ID used for subscription (ref: `customer_address.id`)"""
+  billingAddressId: ID!
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer ID used for subscription (ref: `customer.id`)"""
+  customerId: ID!
+  """
+  End date of subscription (optional). Canceled subscriptions should have 
+  this field updated to track what period(s) of time a subscription was 
+  inactive.
+  """
+  endDate: Time
+  """Primary identifier"""
+  id: ID!
+  """Whether the product requires a prescription"""
+  isPharmacy: Boolean
+  """Date of next scheduled subscription order"""
+  nextOrderDate: Time!
+  """Patient first name"""
+  patientFirstName: String
+  """
+  Patient ID used for subscription (ref: `patient.id`), if subscription is for 
+  a prescription product
+  """
+  patientId: ID
+  """Patient last name"""
+  patientLastName: String
+  """Whether or not the subscription is paused"""
+  paused: Boolean!
+  """Payment method ID used for subscription (ref: `payment_method.id`)"""
+  paymentMethodId: ID!
+  """Period of subscription in days [30, 60, 90, 180]"""
+  period: Int!
+  """
+  Price of product, stored in case of product price changes. If product 
+  price goes down, update this price. If product price goes up, honor the 
+  stored price.
+  """
+  price: Float!
+  """Product ID for subscription (ref: `product.id`)"""
+  productId: ID!
+  """Product name, used as title of product page"""
+  productName: String!
+  """Quantity to order at one time"""
+  qty: Int!
+  """Shipping address ID used for subscription (ref: `customer_address.id`)"""
+  shippingAddressId: ID!
+  """Start date of subscription (mandatory)"""
+  startDate: Time!
+  """Subscription status [active, inactive, exception]"""
+  status: String!
+  """Orders associated to a subscription"""
+  subscriptionOrders: [CustomerSubscriptionOrder]
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Subscription-Order association"""
+type CustomerSubscriptionOrder {
+  """Time of record creation"""
+  createdAt: Time!
+  """Primary identifier """
+  id: ID!
+  """Order ID created from subscription (ref: `order.id`)"""
+  orderId: ID!
+  """Subscription ID (ref: `subscription.id`)"""
+  subscriptionId: ID!
+  """Time of record last update"""
+  updatedAt: Time!
+}
+
+scalar Decimal
+
+"""Input type of DeleteContact"""
+input DeleteContactInput {
+  """Contact ID (ref: `customer_contact.id`)"""
+  id: ID!
+}
+
+"""Return type of DeleteContact"""
+type DeleteContactPayload {
+  """Whether or not contact was deleted"""
+  success: Boolean!
+}
+
+"""Drug object"""
+type Drug {
+  acquisitionPackagePrice: Float
+  acquisitionSource: Int
+  awpSource: Int
+  awpUnitPrice: Float
+  awpUnitPriceConversion: Float
+  compoundType: Int
+  countryOfManufacture: String
+  createdBy: String!
+  createdOn: Time
+  currentLotNumberOne: String
+  currentLotNumberTwo: String
+  customsDescription: String
+  customsUnitPrice: Float!
+  customsUnitWeight: Float!
+  description: String!
+  desiCode: Int
+  directSource: Int
+  directUnitPrice: Float
+  directUnitPriceConversion: Float
+  discardDate: String
+  dosageFormCode: Int
+  drugEnforceDoseCheckType: Int
+  drugId: ID!
+  federalDeaClassCode: Int
+  feeScheduleId: Int
+  fixedDiscardDate: Time
+  gpi: String
+  highestListPackagePrice: Float
+  highestListSource: Int
+  identifier: String
+  isCompound: Boolean!
+  isDrugDescriptionLocked: Boolean!
+  isDrugIsRxLocked: Boolean!
+  isDrugPackageSizeLocked: Boolean!
+  isDrugPackageSizeUnitCodeLocked: Boolean!
+  isDrugStorageConditionLocked: Boolean!
+  isDrugTypeLocked: Boolean!
+  isGeneric: Boolean!
+  isMiscPricePercentOfAwp: Boolean
+  isNonBarcoded: Boolean
+  isRoboticDispense: Boolean!
+  isRx: Boolean!
+  isStocked: Boolean!
+  labelFormatId: Int
+  macSource: Int
+  macUnitPrice: Float
+  macUnitPriceConversion: Float
+  manufacturerName: String
+  medispanStatusCode: String!
+  miscPackagePrice: Float
+  miscPricePercent: Float
+  miscUnitPrice: Float
+  newNdc: String
+  oldNdc: String
+  overrideDeaClassCode: Int
+  packageDescriptionCode: String
+  packageQuantity: Int
+  packageSize: Float
+  packageSizeUnitCode: String
+  preferred: Boolean
+  preventFill: Boolean
+  requireLotNumber: Boolean!
+  routeCode: Int
+  shipToPrescriber: Boolean!
+  statusCode: String!
+  storageCondition: String
+  strength: String
+  therapeuticClass: String
+  thirdPartyRestriction: String
+  totalCompoundPrice: Float
+  updatedBy: String!
+  updatedOn: Time
+  useFixedDiscardDate: Boolean!
+  wacSource: Int
+  wacUnitPrice: Float
+  wacUnitPriceConversion: Float
+}
+
+"""Patient drug allergy information"""
+type DrugAllergy {
+  code: String!
+  description: String!
+}
+
+type EmptyCartPayload {
+  cart: Cart
+}
+
+interface Error {
+  """Error message string"""
+  message: String!
+}
+
+"""Input type of Login"""
+input LoginInput {
+  """Customer email"""
+  email: String!
+  """Customer password"""
+  password: String!
+}
+
+"""Input type of Logout"""
+input LogoutInput {
+  """Optional refresh token to log out specific session"""
+  refreshToken: String
+}
+
+"""Return type of Logout"""
+type LogoutPayload {
+  """Success"""
+  success: Boolean!
+}
+
+scalar Map
+
+"""Patient medical history information"""
+type MedicalHistory {
+  code: String!
+  codeType: Int!
+  description: String!
+}
+
+input MergeCartItemsInput {
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID
+  sessionCartItems: [CreateCartItemInput!]!
+}
+
+type MergeCartItemsPayload {
+  cart: Cart
+}
+
+type Mutation {
+  """Add items to shopping cart"""
+  addCartItems(
+    """Input type of AddCartItems"""
+    input: AddCartItemsInput!
+  ): AddCartItemsPayload!
+  """Adjust qty of an item in a shopping cart"""
+  adjustCartItemQty(
+    """Input type of AdjustCartItemQty"""
+    input: AdjustCartItemQtyInput!
+  ): AdjustCartItemQtyPayload!
+  """Cancel an existing order"""
+  cancelOrder(
+    """Input type of CancelOrder"""
+    input: CancelOrderInput!
+  ): CancelOrderPayload!
+  """Create a single address"""
+  createAddress(
+    """Input type of CreateAddress"""
+    input: CreateAddressInput!
+  ): CreateAddressPayload!
+  """Create 1 or more carriers"""
+  createCarriers(input: [CreateCarriersInput!]): CreateCarriersPayload
+  """Create a single shopping cart"""
+  createCart(
+    """Input type of CreateCart"""
+    input: CreateCartInput!
+  ): CreateCartPayload!
+  """Create checkout from order"""
+  createCheckoutFromOrder(
+    """Input type of CreateCheckoutFromOrder"""
+    input: CreateCheckoutFromOrderInput!
+  ): CreateCheckoutFromOrderPayload!
+  """Create checkout from prescription"""
+  createCheckoutFromPrescription(
+    """Input type of CreateCheckoutFromPrescription"""
+    input: CreateCheckoutFromPrescriptionInput!
+  ): CreateCheckoutFromPrescriptionPayload!
+  """Create a single contact"""
+  createContact(
+    """Input type of CreateContact"""
+    input: CreateContactInput!
+  ): CreateContactPayload!
+  """Create a single customer"""
+  createCustomer(
+    """Input type of CreateCustomer"""
+    input: CreateCustomerInput!
+  ): CreateCustomerPayload!
+  """Create an event address"""
+  createEventAddress(
+    """Input type of CreateEventAddress"""
+    input: CreateEventAddressInput!
+  ): CreateEventAddressPayload!
+  """Create an event customer"""
+  createEventCustomer(
+    """Input type of CreateEventCustomer"""
+    input: CreateEventCustomerInput!
+  ): CreateEventCustomerPayload!
+  """Create an event order"""
+  createEventOrder(
+    """Input type of CreateEventOrder"""
+    input: CreateEventOrderInput!
+  ): CreateEventOrderPayload!
+  """Create an event patient"""
+  createEventPatient(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Input type of CreateEventPatient"""
+    input: CreateEventPatientInput!
+  ): CreateEventPatientPayload!
+  """Create a new order"""
+  createOrder(
+    """Input type of CreateOrder"""
+    input: CreateOrderInput!
+  ): CreateOrderPayload!
+  """Create a single patient"""
+  createPatient(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Input type of CreatePatient"""
+    input: CreatePatientInput!
+    """Whether or not the patient is also the customer"""
+    isCustomer: Boolean!
+  ): CreatePatientPayload!
+  """Create a single payment method"""
+  createPaymentMethod(
+    """Input type of CreatePaymentMethod"""
+    input: CreatePaymentMethodInput!
+  ): CreatePaymentMethodPayload!
+  """Create a single subscription"""
+  createSubscription(
+    """Input type of CreateSubscription"""
+    input: CreateSubscriptionInput!
+  ): CreateSubscriptionPayload!
+  """Create a single subscription order """
+  createSubscriptionOrder(
+    """Input type of CreateSubscriptionOrder"""
+    input: CreateSubscriptionOrderInput!
+  ): CreateSubscriptionOrderPayload!
+  """Delete a single contact"""
+  deleteContact(
+    """Input type of DeleteContact"""
+    input: DeleteContactInput!
+  ): DeleteContactPayload!
+  emptyCart(id: ID!): EmptyCartPayload!
+  """Login a customer"""
+  login(input: LoginInput!): AuthPayload!
+  """Logout a customer"""
+  logout(input: LogoutInput!): LogoutPayload!
+  mergeCartItems(input: MergeCartItemsInput!): MergeCartItemsPayload!
+  """Update specified carrier fields"""
+  partialUpdateCarrier(input: PartialUpdateCarrierInput): PartialUpdateCarrierPayload
+  """Refresh customer access token"""
+  refreshAccessToken(input: RefreshAccessTokenInput!): AuthPayload!
+  """Remove items from shopping cart"""
+  removeCartItems(
+    """Input type of RemoveCartItems"""
+    input: RemoveCartItemsInput!
+  ): RemoveCartItemsPayload!
+  """Request a password reset"""
+  requestReset(email: String!): String!
+  """Reset password"""
+  resetPassword(confirmPassword: String!, email: String!, password: String!): PasswordReset!
+  """Skip subscription"""
+  skipSubscription(
+    """Input type of SkipSubscription"""
+    input: SkipSubscriptionInput!
+  ): SkipSubscriptionPayload!
+  """Submit checkout and return order confirmation details"""
+  submitCheckout(
+    """Input type of SubmitCheckout"""
+    input: SubmitCheckoutInput!
+  ): SubmitCheckoutPayload!
+  """Submit subscription"""
+  submitSubscription(
+    """Input type of SubmitSubscription"""
+    input: SubmitSubscriptionInput!
+  ): SubmitSubscriptionPayload!
+  """Update a single address"""
+  updateAddress(
+    """Input type of UpdateAddress"""
+    input: UpdateAddressInput!
+  ): UpdateAddressPayload!
+  """Update 1 or more carriers"""
+  updateCarriers(input: [UpdateCarriersInput!]): UpdateCarriersPayload
+  """Update a single shopping cart"""
+  updateCart(
+    """Input type of UpdateCart"""
+    input: UpdateCartInput!
+  ): UpdateCartPayload!
+  updateCartItem(input: PartialUpdateCartItemInput!): UpdateCartItemPayload!
+  updateCartItems(input: UpdateCartItemsInput!): UpdateCartItemsPayload!
+  """Update an existing checkout record"""
+  updateCheckout(
+    """Input type of UpdateCheckout"""
+    input: UpdateCheckoutInput!
+  ): UpdateCheckoutPayload!
+  """Update a single contact"""
+  updateContact(
+    """Input type of UpdateContact"""
+    input: UpdateContactInput!
+  ): UpdateContactPayload!
+  """Update a single customer"""
+  updateCustomer(
+    """Input type of UpdateCustomer"""
+    input: UpdateCustomerInput!
+  ): UpdateCustomerPayload!
+  """Update an event address"""
+  updateEventAddress(
+    """Input type of UpdateEventAddress"""
+    input: UpdateEventAddressInput!
+  ): UpdateEventAddressPayload!
+  """Update an event customer"""
+  updateEventCustomer(
+    """Input type of UpdateEventCustomer"""
+    input: UpdateEventCustomerInput!
+  ): UpdateEventCustomerPayload!
+  """Update an event patient"""
+  updateEventPatient(
+    """Input type of UpdateEventPatient"""
+    input: UpdateEventPatientInput!
+  ): UpdateEventPatientPayload!
+  """Update an existing order"""
+  updateOrder(
+    """Input type of UpdateOrder"""
+    input: UpdateOrderInput!
+  ): UpdateOrderPayload!
+  """Update a single patient"""
+  updatePatient(
+    """Input type of UpdatePatient"""
+    input: UpdatePatientInput!
+  ): UpdatePatientPayload!
+  """Update a single payment method"""
+  updatePaymentMethod(
+    """Input type of UpdatePaymentMethod"""
+    input: UpdatePaymentMethodInput!
+  ): UpdatePaymentMethodPayload!
+  """Update a single subscription"""
+  updateSubscription(
+    """Input type of UpdateSubscription"""
+    input: UpdateSubscriptionInput!
+  ): UpdateSubscriptionPayload!
+  """Update a single subscription order"""
+  updateSubscriptionOrder(
+    """Input type of UpdateSubscriptionOrder"""
+    input: UpdateSubscriptionOrderInput!
+  ): UpdateSubscriptionOrderPayload!
+}
+
+interface Node {
+  id: ID!
+}
+
+"""Order information"""
+type Order {
+  """
+  Billing address city, copied (from `customer_address`) at time of order
+  """
+  billingAddressCity: String!
+  """
+  Billing address company, copied (from `customer_address`) at time of order
+  """
+  billingAddressCompany: String
+  """
+  Billing address country, copied (from `customer_address`) at time of order
+  """
+  billingAddressCountry: String!
+  """
+  Billing address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressFirstName: String!
+  """Order billing address ID (ref: `customer_address.id`)"""
+  billingAddressId: ID!
+  """
+  Billing address last name, copied (from `customer_address`) at time of order
+  """
+  billingAddressLastName: String!
+  """
+  Billing address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  billingAddressMiddleName: String
+  """
+  Billing address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  billingAddressPostcode: String!
+  """
+  Billing address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressPrefix: String
+  """
+  Billing address state, copied (from `customer_address`) at time of order
+  """
+  billingAddressState: String!
+  """
+  Billing street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressStreet1: String!
+  """
+  Billing street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  billingAddressStreet2: String
+  """
+  Billing address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressSuffix: String
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this order"""
+  counselingRequested: Boolean
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Customer credit amount used for order"""
+  customerCreditTotal: Float!
+  """Customer date of birth, copied (from `customer`) at time of order"""
+  customerDob: Time
+  """Customer email address, copied (from `customer`) at time of order"""
+  customerEmail: String!
+  """Customer gender, copied (from `customer`) at time of order"""
+  customerGender: String
+  """Customer ID order belongs to (ref: `customer.id`)"""
+  customerId: ID!
+  """Discount total for order"""
+  discountTotal: Float!
+  """
+  Grand total of all items in order. `order.grand_total` = sum(`order_item.total` + 
+  `order_item.tax`) + `shipping_total` + `shipping_tax` - `line_item_discounts` - 
+  `order_discount` - `customer_credit_total`
+  """
+  grandTotal: Float!
+  """Primary identifier"""
+  id: ID!
+  """Order line items information"""
+  lineItems: [OrderItem]
+  """Order number, a human-readable sequential designator for orders"""
+  orderNumber: Int!
+  """Payment method used for order (ref: `payment_method.id`)"""
+  paymentMethodId: ID!
+  """Shipment method selected for order (ref: `shipment_method.id`)"""
+  shipmentMethodId: ID!
+  """
+  Shipping address city, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCity: String!
+  """
+  Shipping address company, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCompany: String
+  """
+  Shipping address country, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCountry: String!
+  """
+  Shipping address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressFirstName: String!
+  """Order shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID!
+  """
+  Shipping address last name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressLastName: String!
+  """
+  Shipping address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  shippingAddressMiddleName: String
+  """
+  Shipping address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  shippingAddressPostcode: String!
+  """
+  Shipping address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressPrefix: String
+  """
+  Shipping address state, copied (from `customer_address`) at time of order
+  """
+  shippingAddressState: String!
+  """
+  Shipping street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressStreet1: String!
+  """
+  Shipping street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  shippingAddressStreet2: String
+  """
+  Shipping address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressSuffix: String
+  """Tax on shipping for order"""
+  shippingTax: Float!
+  """Shipping total for order"""
+  shippingTotal: Float!
+  """
+  Status of order [new, processing, canceled, refunded, (dispensed), complete]
+  """
+  status: String!
+  """
+  Subtotal of all items in order. Equal to the sum of all `order_item.total` 
+  for this order.
+  """
+  subtotal: Float!
+  """
+  Total tax for order. Does not include `shipping_tax`. Equal to the sum of 
+  all `order_item.tax` for this order.
+  """
+  taxTotal: Float!
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Order confirmation information"""
+type OrderConfirmation {
+  """Customer email address, copied (from `customer`) at time of order"""
+  customerEmail: String!
+  """Discount total for order"""
+  discountTotal: Float!
+  """Estimated delivery date"""
+  estimatedDeliveryDate: Time!
+  """
+  Grand total of all items in order. `order.grand_total` = sum(`order_item.total` + 
+  `order_item.tax`) + `shipping_total` + `shipping_tax` - `line_item_discounts` - 
+  `order_discount` - `customer_credit_total`
+  """
+  grandTotal: Float!
+  """Order line items information"""
+  lineItems: [OrderItem]
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Order number, a human-readable sequential designator for orders"""
+  orderNumber: Int!
+  """
+  Shipping address city, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCity: String!
+  """
+  Shipping address company, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCompany: String
+  """
+  Shipping address country, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCountry: String!
+  """
+  Shipping address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressFirstName: String!
+  """
+  Shipping address last name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressLastName: String!
+  """
+  Shipping address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  shippingAddressMiddleName: String
+  """
+  Shipping address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  shippingAddressPostcode: String!
+  """
+  Shipping address name prefix, copied (from `customer_address`) at time of
+  order
+  """
+  shippingAddressPrefix: String
+  """
+  Shipping address state, copied (from `customer_address`) at time of order
+  """
+  shippingAddressState: String!
+  """
+  Shipping street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressStreet1: String!
+  """
+  Shipping street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  shippingAddressStreet2: String
+  """
+  Shipping address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressSuffix: String
+  """Tax on shipping for order"""
+  shippingTax: Float!
+  """Shipping total for order"""
+  shippingTotal: Float!
+  """
+  Subtotal of all items in order. Equal to the sum of all `order_item.total` 
+  for this order.
+  """
+  subtotal: Float!
+  """
+  Total tax for order. Does not include `shipping_tax`. Equal to the sum of 
+  all `order_item.tax` for this order.
+  """
+  taxTotal: Float!
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+"""Order line item information"""
+type OrderItem {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this order item"""
+  counselingRequested: Boolean!
+  """Time of record creation"""
+  createdAt: Time!
+  """Primary identifier"""
+  id: ID!
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Patient ID (ref: `patient.id`), if item requires a prescription"""
+  patientId: ID
+  """Unit price of product ordered"""
+  price: Float!
+  """Product details"""
+  product: Product
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  """Quantity of product ordered"""
+  qty: Int!
+  """Tax for order line item"""
+  tax: Float!
+  """Total for order line item (`qty` * `price`)"""
+  total: Float!
+  """Time of record last update"""
+  updatedAt: Time!
+}
+
+"""Order-Promotion association"""
+type OrderPromotion {
+  """Amount of discount afforded by promotion"""
+  discountAmount: Float!
+  """Primary identifier"""
+  id: ID!
+  """Order item ID (ref: `order_item.id`)"""
+  itemId: ID
+  """Order ID (ref: `order.id`)"""
+  orderId: ID!
+  """Promotion ID of promotion used (ref: `promotion.id`)"""
+  promotionId: ID!
+}
+
+"""Patient other medications taken"""
+type OtherMedication {
+  name: String!
+  newleafProductId: String!
+}
+
+"""All the meta data needed to continue paginating"""
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  totalCount: Int!
+}
+
+"""Input type of PartialUpdateCarrier"""
+input PartialUpdateCarrierInput {
+  id: ID
+  update: [String]
+}
+
+"""Return type of PartialUpdateCarrier"""
+type PartialUpdateCarrierPayload {
+  carrier: Carrier
+}
+
+input PartialUpdateCartItemInput {
+  customerId: ID
+  item: UpdateCartItemInput!
+}
+
+type PasswordReset {
+  createdAt: Time!
+  createdBy: Int!
+  customerId: ID!
+  email: String!
+  id: ID!
+  newPasswordHash: String
+  origPasswordHash: String!
+  resetToken: String
+  revertedAt: Time
+}
+
+"""Patient information"""
+type Patient {
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """Patient date of birth"""
+  dob: Time!
+  """Patient drug allergy information (or n/a if none)"""
+  drugAllergies: [DrugAllergy]
+  """Patient email address (optional)"""
+  email: String
+  """Patient first name"""
+  firstName: String!
+  """Patient gender [male/female]"""
+  gender: String!
+  """Primary identifier"""
+  id: ID!
+  """Whether patient account is active"""
+  isActive: Boolean
+  """Whether patient is pregnant"""
+  isPregnant: Boolean
+  """Patient last name"""
+  lastName: String!
+  """Patient maiden name (optional)"""
+  maidenName: String
+  """Patient medical history (or n/a if none)"""
+  medicalHistory: [MedicalHistory]
+  """Patient middle name (or initial)"""
+  middleName: String
+  """Patient other medications (or n/a if none)"""
+  otherMedications: [OtherMedication]
+  """Hashed patient password (optional)"""
+  password: String
+  """Type of patient [human, canine, feline, equine, bovine, other]"""
+  patientType: String!
+  """Patient name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Whether patient elects to have safety caps on dispensed medication"""
+  safetyCap: Boolean
+  """Patient name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Payment methods are used by customers to pay for orders"""
+type PaymentMethod {
+  """Bill to city for adding card"""
+  billToCity: String
+  """Bill to State for adding card"""
+  billToState: String
+  """Bill to Street address for adding card"""
+  billToStreet: String
+  """Bill to Zip code for adding card"""
+  billToZip: String
+  """Brand of card used [amex, visa, disc, mc]"""
+  brand: String
+  """Time of record creation"""
+  createdAt: Time!
+  """ID of creator of record"""
+  createdBy: Int!
+  """stripe credit card number for adding card"""
+  creditCardNumber: String
+  """Customer ID this payment method belongs to (ref: `customer.id`)"""
+  customerID: ID!
+  """credit card CVV for adding card"""
+  cvv: String
+  """Credit card expiration month (2 digits)"""
+  expMonth: String
+  """Credit card expiration year (4 digits)"""
+  expYear: String
+  """stripe card unique identifier"""
+  fingerprint: String
+  """Primary identifier"""
+  id: ID!
+  """
+  Whether this payment method is the default used for this customer; 
+  only one default payment method may be set at a time for each customer
+  """
+  isDefault: Boolean
+  """
+  Label for payment method visible to customer (i.e. 'Business Credit Card')
+  """
+  label: String
+  """Last four digits of credit card number"""
+  last4: String
+  """Type of payment method [card, echeck]"""
+  paymentType: String!
+  """Payment processor customer ID (external system)"""
+  serviceCustomerID: String
+  """Payment processor token/payment method ID (external system)"""
+  servicePaymentMethodID: String
+  """Time of record last update"""
+  updatedAt: Time!
+  """ID of last updater of record"""
+  updatedBy: Int!
+}
+
+"""Prescriber Information"""
+type Prescriber {
+  """Prescriber street address"""
+  address: String!
+  """Prescriber address city"""
+  city: String!
+  """Prescriber fax number"""
+  fax: String!
+  """Prescriber first name"""
+  firstName: String!
+  """Prescriber last name"""
+  lastName: String!
+  """Prescriber ID in Newleaf (UUID)"""
+  newleafPrescriberId: String!
+  """Prescriber phone number"""
+  phone: String!
+  """Prescriber address state (2-letter abbreviation)"""
+  state: String!
+  """Prescriber address zip (ZIP, ZIP+4)"""
+  zip: String!
+}
+
+"""Filter for searching Prescribers"""
+input PrescriberFilter {
+  """Prescriber street address"""
+  address: String
+  """Prescriber address city"""
+  city: String
+  """Prescriber fax number"""
+  fax: String
+  """Prescriber first name"""
+  firstName: String
+  """Prescriber last name"""
+  lastName: String
+  """Prescriber phone number"""
+  phone: String
+  """Search query string"""
+  searchTerm: String
+  """Prescriber address state (2-letter abbreviation)"""
+  state: String
+  """Prescriber address zip (ZIP, ZIP+4)"""
+  zip: String
+}
+
+type PrescriptionProfile {
+  daw: Boolean!
+  expirationDate: Time!
+  lastDispensed: Time
+  patientName: String!
+  prescriberName: String!
+  productName: String!
+  refillsLeft: Int!
+  rxNumber: ID!
+  unitRemaining: Int!
+  writtenQty: Int!
+}
+
+"""PriceTier object"""
+type PriceTier {
+  """Whether this price tier applies to all customer groups"""
+  allCustomerGroups: Boolean!
+  """Catalog ID (ref: `catalog.id`)"""
+  catalogId: ID!
+  """
+  If this price tier applies to only a specific customer group, which one? (ref: `customer_group.id`)
+  """
+  customerGroupId: ID
+  """Primary identifier"""
+  id: ID!
+  """Unit price for this product price tier"""
+  price: Decimal!
+  """Product ID (ref: `product.id`)"""
+  productId: ID!
+  """
+  Minimum quantity of product price tier; Quantities above this point will use this price tier
+  """
+  quantity: Int!
+}
+
+"""Product object"""
+type Product {
+  """Product attribute values"""
+  attributeValues: [ProductAttributeValue]
+  """Drug information (from Newleaf)"""
+  drug: Drug
+  """Primary identifier"""
+  id: ID!
+  """Product image URL"""
+  imageUrl: String!
+  """Whether the product is active"""
+  isActive: Boolean!
+  """Minimum price for product ('as low as')"""
+  minPrice: Decimal
+  """Product SKU"""
+  name: String!
+  """Whether the product requires a prescription"""
+  pharmacy: Boolean!
+  """Product price tiers"""
+  priceTiers: [PriceTier]
+  """Product name, used as title of product page"""
+  sku: String!
+  """
+  Whether the product needs Special OTC handling (i.e. syringes, needles)
+  """
+  specialOtc: Boolean!
+  """Product tax class ID (for TaxJar, external system)"""
+  taxClassId: String!
+  """Product image thumbnail URL"""
+  thumbnailUrl: String!
+  """Product URL, for accessing product page"""
+  url: String!
+  """Product visibility [1=Nowhere, 2=On site, 3=In search, 4=Everywhere]"""
+  visibility: Int!
+}
+
+type ProductAttributeValue {
+  attributeId: ID!
+  """Primary identifier"""
+  id: ID!
+  productId: ID!
+  value: String!
+  valueType: String!
+}
+
+"""The root type for the pagination. Again, generalized/standardized name"""
+type ProductConnection {
+  edges: [ProductEdge]
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  """The cursor for this result item fits naturally here"""
+  cursor: String!
+  """
+  'node' is a generalized name for an item in a collection - it's our noun!
+  """
+  node: Product!
+}
+
+"""
+ProductViews group individual products into a single page for display purposes
+"""
+type ProductView {
+  """
+  Attributes associated with ProductView, all of which must be shared across all products associated with the product view
+  """
+  attributes: [ProductViewAttribute!]!
+  """Default product selected when rendering the product view"""
+  defaultProduct: ID!
+  """Primary identifier"""
+  id: ID!
+  """
+  Products associated with ProductView, all Products must be on zero or one ProductView. Products cannot appear on multiple ProductViews
+  """
+  products: [Product!]
+  """
+  Title of the product view, only for managing product views, not shown on the website
+  """
+  title: String!
+  """
+  Product view URLs (must have at least 1, can have multiple URLs for the same product view)
+  """
+  urls: [String!]!
+}
+
+"""
+ProductViewAttribute is an attribute (on a product) used for driving ProductViews
+"""
+type ProductViewAttribute {
+  """Primary identifier"""
+  id: ID!
+  name: String!
+  valueType: String!
+}
+
+type Query {
+  """Return a single address"""
+  address(
+    """Address ID (ref: `customer_address.id`)"""
+    addressId: ID!
+  ): Address
+  """Return all addresses for a customer"""
+  addresses(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Filter to show inactive addresses"""
+    showInactive: Boolean
+  ): [Address]
+  """
+  AutoComplete for products, returns up to limit results (or 10 if omitted)
+  """
+  autoCompleteProducts(input: String!, limit: Int): [AutocompleteResult]
+  """
+  Auto complete for allergies, returns up to limit results (or 10 if omitted)
+  """
+  autocompleteAllergies(input: String!, limit: Int): [DrugAllergy]
+  autocompleteDiseases(input: String!, limit: Int): [MedicalHistory]
+  autocompleteMedications(input: String!, limit: Int): [OtherMedication]
+  """Autofill patient fields with customer information"""
+  autofillPatient(customerId: ID!): Customer
+  """Find a carrier by its ID"""
+  carrier(id: ID): Carrier
+  """List of carriers"""
+  carriers: [Carrier!]
+  """Find a cart by customerID"""
+  cart(
+    """Cart ID (ref: `cart.id`)"""
+    cartId: String
+  ): Cart
+  """List of categories"""
+  categories(parentId: ID): [Category]
+  """Find a category by its ID"""
+  category(id: ID!): Category
+  """Find a checkout by customer ID"""
+  checkout(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): Checkout
+  """Return a single contact"""
+  contact(
+    """Contact ID (ref: `customer_contact.id`)"""
+    contactId: ID!
+  ): Contact
+  """Return all contacts for a customer"""
+  contacts(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): [Contact]
+  """Return a single customer"""
+  customer(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): Customer
+  """Return a single customer credit"""
+  customerCredit(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): Credit
+  """
+  Return all credit transactions for a specific customer given a credit ID
+  """
+  customerCreditTransactions(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): [CreditTransaction]
+  """Find all orders for a customer by customer ID"""
+  customerOrders(
+    """Customer ID (ref: `customer.id`)"""
+    id: ID!
+  ): [Order]
+  customerPatientId(customerId: ID!, patientIds: [ID!]): ID
+  """Return all patients for a customer"""
+  customerPatients(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+  ): [Patient]
+  customerPrescriptions(customerId: ID!): [Rx]
+  """
+  Returns the total number of active sessions for the currently logged-in user
+  """
+  logins(userId: Int!): Int!
+  node(id: ID!): Node
+  """Find a order by its ID"""
+  order(
+    """Order ID (ref: `order.id`)"""
+    id: ID!
+  ): Order
+  """Retrieve list of all orders"""
+  orders: [Order]
+  """Return a single patient"""
+  patient(
+    """Patient ID (ref: `patient.id`)"""
+    patientId: ID!
+  ): Patient
+  """Find all orders for a patient by patient ID"""
+  patientOrders(
+    """Patient ID (ref: `patient.id`)"""
+    id: ID!
+  ): [Order]
+  """Return a single payment method"""
+  paymentMethod(
+    """Payment Method ID (ref:`payment_method.id`)"""
+    paymentMethodId: ID!
+  ): PaymentMethod
+  """Return all payment methods for a customer"""
+  paymentMethods(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Filter to show inactive payment methods"""
+    showInactive: Boolean
+  ): [PaymentMethod]
+  """Get a single prescriber"""
+  prescriber(newleafPrescriberId: String!): Prescriber
+  prescriptionOnFile(patientId: ID!, productId: ID!): Boolean!
+  prescriptionProfile(customerId: ID!): [PrescriptionProfile]
+  """Find a product by its ID"""
+  product(
+    """Product ID (ref: `product.id`)"""
+    id: ID!
+  ): Product
+  """Find a product view by its ID or URL"""
+  productView(id: ID, url: String): ProductView
+  """List of products"""
+  products(
+    """Returns the elements that come after the specified cursor"""
+    after: String
+    """Returns the elements that come before the specified cursor"""
+    before: String
+    """Category to search for product in (including category children)"""
+    categoryId: ID
+    """Returns up to the first n elements from the list"""
+    first: Int
+    """Product ID (ref: `product.id`)"""
+    id: ID
+    """Returns up to the last n elements from the list"""
+    last: Int
+  ): ProductConnection
+  """Search prescribers"""
+  searchPrescribers(filter: PrescriberFilter!): [Prescriber]
+  """Text search for Products"""
+  searchProducts(
+    """Returns the elements that come after the specified cursor"""
+    after: String
+    """Returns the elements that come before the specified cursor"""
+    before: String
+    """Category to search for product in (including category children)"""
+    categoryId: ID
+    """Returns up to the first n elements from the list"""
+    first: Int
+    """Search query string"""
+    input: String!
+    """Returns up to the last n elements from the list"""
+    last: Int
+  ): ProductConnection
+  """
+  Get rates for all shipping methods, sent to shipping address,
+  for items in customer's cart
+  """
+  shipmentMethods(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Shipping Address ID (ref: `customer_address.id`)"""
+    shippingAddressId: ID!
+  ): [ShipmentMethod]
+  """Return a single subscription"""
+  subscription(
+    """Subscription ID (ref: `subscription.id`)"""
+    subscriptionId: ID!
+  ): CustomerSubscription
+  """Return a single subscription order"""
+  subscriptionOrder(
+    """Subscription Order ID (ref: `subscription_order.id`)"""
+    subscriptionOrderId: ID!
+  ): CustomerSubscriptionOrder
+  """Return all subscription orders for a specific customer subscription"""
+  subscriptionOrders(
+    """Subscription ID (ref: `subscription.id`)"""
+    subscriptionId: ID!
+  ): [CustomerSubscriptionOrder]
+  """Return all subscriptions for a customer """
+  subscriptions(
+    """Customer ID (ref: `customer.id`)"""
+    customerId: ID!
+    """Filter to show inactive subscriptions"""
+    showInactive: Boolean
+  ): [CustomerSubscription]
+}
+
+"""Input type of RefreshAccessToken"""
+input RefreshAccessTokenInput {
+  """Refresh token for logged-in customer"""
+  refreshToken: String!
+}
+
+"""Input type of RemoveCartItem"""
+input RemoveCartItemsInput {
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String
+  """Cart Item IDs (ref: `cart_item.id`)"""
+  itemIds: [ID!]
+}
+
+"""Return type of RemoveCartItems"""
+type RemoveCartItemsPayload {
+  """Cart information"""
+  cart: Cart
+}
+
+type Rx {
+  customerId: ID!
+  expirationDate: Time!
+  origin: String!
+  productName: String!
+  rxNumber: ID!
+  writtenQty: Int!
+}
+
+"""Shipment methods available in the store"""
+type ShipmentMethod {
+  """
+  Carrier of this shipment method [DHL, FedEx, UPS, USPS].
+  Use correct capitalization here, shown on store frontend.
+  """
+  carrier: String!
+  """
+  Description of shipment method, such as delivery timeframe, whether
+  tracking number is provided, weekend and P.O. Box delivery capability.
+  Shown on store frontend
+  """
+  description: String!
+  """Primary identifier"""
+  id: ID!
+  """Price of this shipment method, if flat pricing"""
+  rate: Float!
+  """
+  Service tier of this shipment method as the carrier describes it
+  (i.e. Priority Mail, Ground, Second Day Air, etc.).
+  Use correct capitalization here, shown on store frontend.
+  """
+  service: String!
+}
+
+"""Input type of SkipSubscription"""
+input SkipSubscriptionInput {
+  """Subscription ID (ref: `subscription.id`)"""
+  id: ID!
+}
+
+"""Return type of SkipSubscription"""
+type SkipSubscriptionPayload {
+  """List of subscriptions associated to a customer"""
+  subscriptions: [CustomerSubscription]
+}
+
+"""Input type of SubmitCheckout"""
+input SubmitCheckoutInput {
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID!
+}
+
+"""Return type of SubmitCheckout"""
+type SubmitCheckoutPayload {
+  """Order confirmation information"""
+  orderConfirmation: [OrderConfirmation]
+}
+
+input SubmitSubscriptionInput {
+  billingAddressId: ID!
+  customerId: ID!
+  items: [AddSubscriptionItemInput]
+  paymentMethodId: ID!
+  shipmentMethodId: ID!
+  shippingAddressId: ID!
+}
+
+"""Return type of SubmitSubscription"""
+type SubmitSubscriptionPayload {
+  """List of subscriptions associated to a customer"""
+  subscription: [CustomerSubscription]
+}
+
+scalar Time
+
+"""Input type of UpdateAddress"""
+input UpdateAddressInput {
+  """Customer address city"""
+  city: String
+  """Customer address company name"""
+  company: String
+  """Customer address country (i.e. USA)"""
+  country: String
+  """Customer ID address belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """Customer address first name"""
+  firstName: String
+  """Primary identifier"""
+  id: ID!
+  """Whether customer address is active"""
+  isActive: Boolean
+  """
+  Whether this address is the default billing address used for this customer; 
+  only one default billing address may be set at a time for each customer. 
+  Can be the same address as the default shipping address
+  """
+  isDefaultBilling: Boolean
+  """
+  Whether this address is the default shipping address used for this customer; 
+  only one default shipping address may be set at a time for each customer. 
+  Can be the same address as the default billing address
+  """
+  isDefaultShipping: Boolean
+  """Text label for customer address (i.e. 'Home Address')"""
+  label: String
+  """Customer address last name"""
+  lastName: String
+  """Customer address middle name (or initial)"""
+  middleName: String
+  """Customer address postcode (ZIP, ZIP+4)"""
+  postcode: String
+  """Customer address prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer address state (2-letter abbreviation)"""
+  state: String
+  """Customer street address line 1"""
+  street1: String
+  """Customer street address line 2 (i.e. apartment number)"""
+  street2: String
+  """Customer address name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of UpdateAddress"""
+type UpdateAddressPayload {
+  """Address information"""
+  address: Address
+}
+
+"""Input type of UpdateCarriers"""
+input UpdateCarriersInput {
+  flatRate: Float
+  formattedName: String
+  iconImageUrl: String
+  id: ID!
+  name: String
+}
+
+"""Return type of UpdateCarriers"""
+type UpdateCarriersPayload {
+  carriers: [Carrier]
+}
+
+"""Input type of UpdateCart"""
+input UpdateCartInput {
+  """Cart items information"""
+  cartItems: [UpdateCartItemInput]
+  """Customer ID cart belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """Primary identifier"""
+  id: String!
+  """
+  Subtotal of all items in cart. Equal to the sum of all `cart_item.total` for 
+  this cart.
+  """
+  subtotal: Float
+}
+
+"""Input type of UpdateCartItem"""
+input UpdateCartItemInput {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Cart ID (ref: `cart.id`)"""
+  cartId: String
+  """Primary identifier"""
+  id: ID!
+  """Patient ID (ref: `patient.id`), if cart item requires a prescription"""
+  patientId: ID
+  prescription: AddCartItemPrescriptionInput
+  """Product ID (ref: `product.id`)"""
+  productId: ID
+  productName: String
+  """Quantity of product in cart"""
+  qty: Int
+  requiresRx: Boolean
+  """Tax for cart item"""
+  tax: Float
+  """Total for cart item (`qty` * `price`)"""
+  total: Float
+}
+
+type UpdateCartItemPayload {
+  cart: Cart
+}
+
+input UpdateCartItemPrescriptionInput {
+  """Cart Item ID (ref: cart_item.id)"""
+  cartItemId: ID!
+  """Newleaf Prescriber ID"""
+  newleafPrescriberId: String
+  """Transfer Pharmacy fax"""
+  pharmacyFax: String
+  """Transfer Pharmacy name"""
+  pharmacyName: String
+  """Transfer Pharmacy phone"""
+  pharmacyPhone: String
+  """Transfer Pharmacy rx number"""
+  pharmacyRxNumber: ID
+  """Prescriber street address line 1"""
+  prescriberAddress: String
+  """Prescriber address city"""
+  prescriberCity: String
+  """Prescriber fax number"""
+  prescriberFax: String
+  """Prescriber first name"""
+  prescriberFirstName: String
+  """Prescriber last name"""
+  prescriberLastName: String
+  """Prescriber phone number"""
+  prescriberPhone: String
+  """Prescriber address state (2-letter abbreviation)"""
+  prescriberState: String
+  """Prescriber address zip (ZIP, ZIP+4)"""
+  prescriberZip: String
+  """Whether or not patient has a prescription on file"""
+  rxOnFile: Boolean
+}
+
+input UpdateCartItemsInput {
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID
+  """Items to be added to cart"""
+  items: [UpdateCartItemInput]
+}
+
+type UpdateCartItemsPayload {
+  cart: Cart
+}
+
+"""Return type of UpdateCart"""
+type UpdateCartPayload {
+  """Cart information"""
+  cart: Cart
+}
+
+"""Input type of UpdateCheckout"""
+input UpdateCheckoutInput {
+  """Billing address ID for checkout (ref: customer_address.id)"""
+  billingAddressId: ID
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this checkout"""
+  counselingRequested: Boolean
+  """Customer ID checkout belongs to (ref: customer.id)"""
+  customerId: ID
+  """Payment method used for checkout (ref: payment_method.id)"""
+  paymentMethodId: ID
+  """Shipment method selected for checkout (ref: shipment_method.id)"""
+  shipmentMethodId: ID
+  """Shipping address ID for checkout (ref: customer_address.id)"""
+  shippingAddressId: ID
+}
+
+"""Return type of UpdateCheckout"""
+type UpdateCheckoutPayload {
+  checkout: Checkout
+}
+
+"""Input type of UpdateContact"""
+input UpdateContactInput {
+  """Customer contact information for this method"""
+  contactInfo: String
+  """Customer contact method [email, phone, sms]"""
+  contactMethod: String
+  """Customer ID (ref: `customer.id`)"""
+  customerId: ID
+  """Primary identifier"""
+  id: ID!
+  """
+  Whether this is the primary method of contact for this customer 
+  (only one record true per customer)
+  """
+  isPrimary: Boolean
+}
+
+"""Return type of UpdateContact"""
+type UpdateContactPayload {
+  """Contact information"""
+  contact: Contact
+}
+
+"""Input type of UpdateCustomer"""
+input UpdateCustomerInput {
+  """Customer identifier in ActiveCampaign (external system)"""
+  activeCampaignId: Int
+  """Whether customer may be contacted by email"""
+  contactMethodEmail: Boolean
+  """Whether customer may be contacted by phone"""
+  contactMethodPhone: Boolean
+  """Whether customer may be contacted by sms (text message)"""
+  contactMethodSms: Boolean
+  """Customer date of birth"""
+  dob: Time
+  """Customer email address"""
+  email: String
+  """Customer first name"""
+  firstName: String
+  """Customer gender [male/female]"""
+  gender: String
+  """Primary identifier"""
+  id: ID!
+  """Whether customer account is active"""
+  isActive: Boolean
+  """Whether customer is subscribed to the company newsletter"""
+  isSubNewsletter: Boolean
+  """Customer last name"""
+  lastName: String
+  """Customer maiden name (optional)"""
+  maidenName: String
+  """Customer middle name (or initial)"""
+  middleName: String
+  """Hashed customer password"""
+  password: String
+  """Customer name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer name suffix"""
+  suffix: String
+}
+
+"""Return type of UpdateCustomer"""
+type UpdateCustomerPayload {
+  """Customer information"""
+  customer: Customer
+}
+
+input UpdateDrugAllergyInput {
+  code: String!
+  description: String!
+}
+
+input UpdateEventAddressInput {
+  """Customer address city"""
+  city: String
+  """Customer address company name"""
+  company: String
+  """Customer address country (i.e. USA)"""
+  country: String
+  """Customer ID address belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """Customer address first name"""
+  firstName: String
+  """Primary identifier"""
+  id: ID!
+  """Whether customer address is active"""
+  isActive: Boolean
+  """
+  Whether this address is the default billing address used for this customer; 
+  only one default billing address may be set at a time for each customer. 
+  Can be the same address as the default shipping address
+  """
+  isDefaultBilling: Boolean
+  """
+  Whether this address is the default shipping address used for this customer; 
+  only one default shipping address may be set at a time for each customer. 
+  Can be the same address as the default billing address
+  """
+  isDefaultShipping: Boolean
+  """Text label for customer address (i.e. 'Home Address')"""
+  label: String
+  """Customer address last name"""
+  lastName: String
+  """Customer address middle name (or initial)"""
+  middleName: String
+  """Address ID in Newleaf"""
+  newleafAddressId: String!
+  """Customer address postcode (ZIP, ZIP+4)"""
+  postcode: String
+  """Customer address prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer address state (2-letter abbreviation)"""
+  state: String
+  """Customer street address line 1"""
+  street1: String
+  """Customer street address line 2 (i.e. apartment number)"""
+  street2: String
+  """Customer address name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of UpdateEventAddress"""
+type UpdateEventAddressPayload {
+  """Address information"""
+  address: Address
+}
+
+input UpdateEventCustomerInput {
+  """Customer identifier in ActiveCampaign (external system)"""
+  activeCampaignId: Int
+  """Whether customer may be contacted by email"""
+  contactMethodEmail: Boolean
+  """Whether customer may be contacted by phone"""
+  contactMethodPhone: Boolean
+  """Whether customer may be contacted by sms (text message)"""
+  contactMethodSms: Boolean
+  """Customer date of birth"""
+  dob: Time
+  """Customer email address"""
+  email: String
+  """Customer first name"""
+  firstName: String
+  """Customer gender [male/female]"""
+  gender: String
+  """Primary identifier"""
+  id: ID!
+  """Whether customer account is active"""
+  isActive: Boolean
+  """Whether customer is subscribed to the company newsletter"""
+  isSubNewsletter: Boolean
+  """Customer last name"""
+  lastName: String
+  """Customer maiden name (optional)"""
+  maidenName: String
+  """Customer middle name (or initial)"""
+  middleName: String
+  """Hashed customer password"""
+  password: String
+  """Customer name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Customer name suffix"""
+  suffix: String
+}
+
+"""Return type of UpdateEventCustomer"""
+type UpdateEventCustomerPayload {
+  """Customer information"""
+  customer: Customer
+}
+
+input UpdateEventPatientInput {
+  """Patient date of birth"""
+  dob: Time
+  """Patient drug allergy information (or n/a if none)"""
+  drugAllergy: String
+  """Patient first name"""
+  firstName: String
+  """Patient gender [male/female]"""
+  gender: String
+  """Primary identifier"""
+  id: ID!
+  """Whether patient account is active"""
+  isActive: Boolean
+  """Whether patient is pregnant"""
+  isPregnant: Boolean
+  """Patient last name"""
+  lastName: String
+  """Patient maiden name (optional)"""
+  maidenName: String
+  """Patient medical history (or n/a if none)"""
+  medicalHistory: String
+  """Patient middle name (or initial)"""
+  middleName: String
+  """Patient other medications (or n/a if none)"""
+  otherMedication: String
+  """Type of patient [human, canine, feline, equine, bovine, other]"""
+  patientType: String
+  """Patient name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Whether patient elects to have safety caps on dispensed medication"""
+  safetyCap: Boolean
+  """Patient name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of UpdateEventPatient"""
+type UpdateEventPatientPayload {
+  """Patient information"""
+  patient: Patient
+}
+
+input UpdateMedicalHistoryInput {
+  code: String!
+  codeType: Int!
+  description: String!
+}
+
+"""Input type of UpdateOrder"""
+input UpdateOrderInput {
+  """
+  Billing address city, copied (from `customer_address`) at time of order
+  """
+  billingAddressCity: String
+  """
+  Billing address company, copied (from `customer_address`) at time of order
+  """
+  billingAddressCompany: String
+  """
+  Billing address country, copied (from `customer_address`) at time of order
+  """
+  billingAddressCountry: String
+  """
+  Billing address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressFirstName: String
+  """Order billing address ID (ref: `customer_address.id`)"""
+  billingAddressId: ID
+  """
+  Billing address last name, copied (from `customer_address`) at time of order
+  """
+  billingAddressLastName: String
+  """
+  Billing address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  billingAddressMiddleName: String
+  """
+  Billing address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  billingAddressPostcode: String
+  """
+  Billing address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressPrefix: String
+  """
+  Billing address state, copied (from `customer_address`) at time of order
+  """
+  billingAddressState: String
+  """
+  Billing street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressStreet1: String
+  """
+  Billing street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  billingAddressStreet2: String
+  """
+  Billing address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  billingAddressSuffix: String
+  """Counseling description, if counseling was requested"""
+  counselingDescription: String
+  """Whether counseling was requested by the patient for this order"""
+  counselingRequested: Boolean
+  """Customer credit amount used for order"""
+  customerCreditTotal: Float
+  """Customer date of birth, copied (from `customer`) at time of order"""
+  customerDob: Time
+  """Customer email address, copied (from `customer`) at time of order"""
+  customerEmail: String
+  """Customer gender, copied (from `customer`) at time of order"""
+  customerGender: String
+  """Customer ID order belongs to (ref: `customer.id`)"""
+  customerId: ID
+  """Discount total for order"""
+  discountTotal: Float
+  """
+  Grand total of all items in order. `order.grand_total` = sum(`order_item.total` + 
+  `order_item.tax`) + `shipping_total` + `shipping_tax` - `line_item_discounts` - 
+  `order_discount` - `customer_credit_total`
+  """
+  grandTotal: Float
+  """Primary identifier"""
+  id: ID!
+  """Order line items information"""
+  lineItems: [UpdateOrderItemInput]
+  """Order number, a human-readable sequential designator for orders"""
+  orderNumber: Int
+  """Payment method used for order (ref: `payment_method.id`)"""
+  paymentMethodId: ID
+  """Shipment method selected for order (ref: `shipment_method.id`)"""
+  shipmentMethodId: ID
+  """
+  Shipping address city, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCity: String
+  """
+  Shipping address company, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCompany: String
+  """
+  Shipping address country, copied (from `customer_address`) at time of order
+  """
+  shippingAddressCountry: String
+  """
+  Shipping address first name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressFirstName: String
+  """Order shipping address ID (ref: `customer_address.id`)"""
+  shippingAddressId: ID
+  """
+  Shipping address last name, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressLastName: String
+  """
+  Shipping address middle name (or initial), copied (from `customer_address`) 
+  at time of order
+  """
+  shippingAddressMiddleName: String
+  """
+  Shipping address postcode (ZIP/ZIP+4), copied (from `customer_address`) at 
+  time of order
+  """
+  shippingAddressPostcode: String
+  """
+  Shipping address name prefix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressPrefix: String
+  """
+  Shipping address state, copied (from `customer_address`) at time of order
+  """
+  shippingAddressState: String
+  """
+  Shipping street address line 1, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressStreet1: String
+  """
+  Shipping street address line 2 (i.e. apartment number), 
+  copied (from `customer_address`) at time of order
+  """
+  shippingAddressStreet2: String
+  """
+  Shipping address name suffix, copied (from `customer_address`) at time of 
+  order
+  """
+  shippingAddressSuffix: String
+  """Tax on shipping for order"""
+  shippingTax: Float
+  """Shipping total for order"""
+  shippingTotal: Float
+  """Status of order"""
+  status: String
+  """
+  Subtotal of all items in order. Equal to the sum of all `order_item.total` 
+  for this order.
+  """
+  subtotal: Float
+  """
+  Total tax for order. Does not include `shipping_tax`. Equal to the sum of 
+  all `order_item.tax` for this order.
+  """
+  taxTotal: Float
+}
+
+"""Input type of UpdateOrderItem"""
+input UpdateOrderItemInput {
+  """Period of subscription in days [30, 45, 60, 90, 180]"""
+  autoReorder: Int
+  """Primary identifier"""
+  id: ID!
+  """Order ID (ref: `order.id`)"""
+  orderId: ID
+  """Patient ID (ref: `patient.id`), if item requires a prescription"""
+  patientId: ID
+  """Unit price of product ordered"""
+  price: Float
+  """Product ID (ref: `product.id`)"""
+  productId: ID
+  """Quantity of product ordered"""
+  qty: Int
+  """Tax for order line item"""
+  tax: Float
+  """Total for order line item (`qty` * `price`)"""
+  total: Float
+}
+
+"""Return type of UpdateOrder"""
+type UpdateOrderPayload {
+  """Order information"""
+  order: Order
+}
+
+input UpdateOtherMedicationInput {
+  name: String!
+  newleafProductId: String!
+}
+
+"""Input type of UpdatePatient"""
+input UpdatePatientInput {
+  """Patient date of birth"""
+  dob: Time
+  """Patient drug allergy information (or n/a if none)"""
+  drugAllergies: [UpdateDrugAllergyInput]
+  """Patient first name"""
+  firstName: String
+  """Patient gender [male/female]"""
+  gender: String
+  """Primary identifier"""
+  id: ID!
+  """Whether patient account is active"""
+  isActive: Boolean
+  """Whether patient is pregnant"""
+  isPregnant: Boolean
+  """Patient last name"""
+  lastName: String
+  """Patient maiden name (optional)"""
+  maidenName: String
+  """Patient medical history (or n/a if none)"""
+  medicalHistory: [UpdateMedicalHistoryInput]
+  """Patient middle name (or initial)"""
+  middleName: String
+  """Patient other medications (or n/a if none)"""
+  otherMedications: [UpdateOtherMedicationInput]
+  """Type of patient [human, canine, feline, equine, bovine, other]"""
+  patientType: String
+  """Patient name prefix (i.e. Dr., Mr., Mrs., Rev., etc.)"""
+  prefix: String
+  """Whether patient elects to have safety caps on dispensed medication"""
+  safetyCap: Boolean
+  """Patient name suffix (i.e. Sr., Jr., III, IV, Esq., etc.)"""
+  suffix: String
+}
+
+"""Return type of UpdatePatient"""
+type UpdatePatientPayload {
+  """Patient information"""
+  patient: Patient
+}
+
+"""Input type of UpdatePaymentMethod"""
+input UpdatePaymentMethodInput {
+  """Payment method ID"""
+  ID: ID!
+  """eCheck Account Number"""
+  accountNumber: String
+  """Billing Address ID"""
+  addressID: ID!
+  """Brand of card used [amex, visa, disc, mc]"""
+  brand: String
+  """Credit card full number (16 digits)"""
+  creditCardNumber: String
+  """Customer ID this payment method belongs to (ref: `customer.id`)"""
+  customerID: ID!
+  """Credit card cvv"""
+  cvv: String
+  """Credit card expiration month (2 digits)"""
+  expMonth: String
+  """Credit card expiration year (4 digits)"""
+  expYear: String
+  """
+  Whether this payment method is the default used for this customer; 
+  only one default payment method may be set at a time for each customer
+  """
+  isDefault: Boolean
+  """
+  Label for payment method visible to customer (i.e. 'Business Credit Card')
+  """
+  label: String
+  """Type of payment method [card, echeck]"""
+  paymentType: String!
+  """eCheck Routing Number"""
+  routingNumber: String
+}
+
+"""Return type of UpdatePaymentMethod"""
+type UpdatePaymentMethodPayload {
+  """Payment method information"""
+  paymentMethod: PaymentMethod
+}
+
+"""Input type of UpdateSubscription"""
+input UpdateSubscriptionInput {
+  """Billing address ID used for subscription (ref: `customer_address.id`)"""
+  billingAddressId: ID
+  """Customer ID used for subscription (ref: `customer.id`)"""
+  customerId: ID
+  """
+  End date of subscription (optional). Canceled subscriptions should have 
+  this field updated to track what period(s) of time a subscription was 
+  inactive.
+  """
+  endDate: Time
+  """Primary identifier"""
+  id: ID!
+  """Date of next scheduled subscription order"""
+  nextOrderDate: Time
+  """
+  Patient ID used for subscription (ref: `patient.id`), if subscription is for 
+  a prescription product
+  """
+  patientId: ID
+  """Whether or not the subscription is paused"""
+  paused: Boolean
+  """Payment method ID used for subscription (ref: `payment_method.id`)"""
+  paymentMethodId: ID
+  """Period of subscription in days [30, 60, 90, 180]"""
+  period: Int
+  """
+  Price of product, stored in case of product price changes. If product 
+  price goes down, update this price. If product price goes up, honor the 
+  stored price.
+  """
+  price: Float
+  """Product ID for subscription (ref: `product.id`)"""
+  productId: ID
+  """Quantity to order at one time"""
+  qty: Int
+  """Shipping address ID used for subscription (ref: `customer_address.id`)"""
+  shippingAddressId: ID
+  """Start date of subscription (mandatory)"""
+  startDate: Time
+  """Subscription status [active, inactive, exception]"""
+  status: String
+}
+
+"""Input type of UpdateSubscriptionOrder"""
+input UpdateSubscriptionOrderInput {
+  """Primary identifier"""
+  id: ID!
+  """Order ID (ref: `order.id`)"""
+  orderId: ID
+  """Subscription ID (ref: `subscription.id`)"""
+  subscriptionId: ID
+}
+
+"""Return type of UpdateSubscriptionOrder"""
+type UpdateSubscriptionOrderPayload {
+  """Subscription order information"""
+  subscriptionOrder: CustomerSubscriptionOrder
+}
+
+"""Return type of UpdateSubscription"""
+type UpdateSubscriptionPayload {
+  """Subscription information"""
+  subscription: CustomerSubscription
+}
+
+scalar _FieldSet
